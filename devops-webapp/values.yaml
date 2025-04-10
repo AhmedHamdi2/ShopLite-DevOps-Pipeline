@@ -1,0 +1,99 @@
+# Ingress Configuration
+ingress:
+  enabled: false  # Set to true if you want to enable ingress
+  className: ""
+  annotations: {}
+  hosts:
+    - host: devops-webapp.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+# Service Configuration
+service:
+  type: LoadBalancer  # Can be LoadBalancer, NodePort, or ClusterIP
+  port: 80
+  targetPort: 80
+  nodePort: 30000  # For NodePort service, if needed
+
+# Frontend Configuration
+frontend:
+  replicaCount: 1
+  image:
+    repository: ahmedhamdi1/devops-webapp-frontend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  imagePullSecrets: []
+  service:
+    type: ClusterIP
+    port: 8081
+    targetPort: 80
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  podAnnotations: {}
+  securityContext: {}
+
+# Backend Configuration
+backend:
+  replicaCount: 1
+  image:
+    repository: ahmedhamdi1/devops-webapp-backend
+    pullPolicy: IfNotPresent
+    tag: "latest"
+  imagePullSecrets: []
+  service:
+    type: ClusterIP
+    port: 3003
+    targetPort: 3001
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 3
+    targetCPUUtilizationPercentage: 80
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  podAnnotations: {}
+  securityContext: {}
+
+# Common Configurations
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podSecurityContext: {}
+securityContext: {}
+
+# Frontend HPA (Horizontal Pod Autoscaler)
+frontendHPA:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+# Backend HPA (Horizontal Pod Autoscaler)
+backendHPA:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80

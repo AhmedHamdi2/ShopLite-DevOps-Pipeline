@@ -1,0 +1,20 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3002:3001"
+    networks:
+      - devops-network
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    networks:
+      - devops-network
+
+networks:
+  devops-network:
+    driver: bridge
