@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "devops-webapp.fullname" . }}-frontend
+  labels:
+    {{- include "devops-webapp.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.frontend.service.type }}   # Reference frontend service here
+  ports:
+    - port: {{ .Values.frontend.service.port }}
+      targetPort: {{ .Values.frontend.service.targetPort }}
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "devops-webapp.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "devops-webapp.fullname" . }}-backend
+  labels:
+    {{- include "devops-webapp.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.backend.service.type }}  # Reference backend service here
+  ports:
+    - port: {{ .Values.backend.service.port }}
+      targetPort: {{ .Values.backend.service.targetPort }}
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "devops-webapp.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
